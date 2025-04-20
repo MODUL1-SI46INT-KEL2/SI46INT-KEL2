@@ -6,30 +6,25 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateCompanyProfilesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('company_profiles', function (Blueprint $table) {
             $table->id(); // Auto-incrementing primary key
-            $table->string('logo_path')->nullable();   // Column for storing logo path
-            $table->string('banner_path')->nullable(); // Column for storing banner path
-            $table->string('tagline')->nullable();     // Column for storing tagline
-            $table->timestamps();                      // Created at & Updated at timestamps
+            $table->unsignedBigInteger('user_id'); // Foreign key to users table
+            $table->string('company_name');
+            $table->text('company_description');
+            // Add other fields as needed
+
+            // Foreign key constraint
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->timestamps();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('company_profiles');
     }
 }
+
 

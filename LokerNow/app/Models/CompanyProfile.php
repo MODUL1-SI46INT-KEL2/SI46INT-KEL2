@@ -9,22 +9,20 @@ class CompanyProfile extends Model
 {
     use HasFactory;
 
-    // Define the fillable attributes
+    // Define the table (optional if the table name follows Laravel's convention)
+    protected $table = 'company_profiles';
+
+    // The attributes that are mass assignable
     protected $fillable = [
-        'logo_path',     // To store the path of the company logo
-        'banner_path',   // To store the path of the company banner
-        'tagline',       // To store the company's tagline
+        'user_id', // Foreign key to the users table
+        'company_name',
+        'company_description',
+        // Add other fields as needed
     ];
 
-    // Optional: If you're storing the timestamps
-    public $timestamps = true;
-
-    /**
-     * Get the user that owns the company profile.
-     */
+    // Define the relationship with the User model
     public function user()
     {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class); // CompanyProfile belongs to a User
     }
 }
-

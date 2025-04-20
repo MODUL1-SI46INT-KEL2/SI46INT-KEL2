@@ -2,56 +2,34 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\CompanyProfile;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
 
 class CompanyProfileController extends Controller
 {
-    public function edit()
+    public function edit($id)
     {
-        $user = Auth::user();
-        return view('company_profiles.edit', [
-            'companyProfile' => $user->companyProfile,
-        ]);
+        // Fetch the company profile based on the id
+        $companyProfile = CompanyProfile::findOrFail($id);
+
+        // Pass the company profile to the edit view
+        return view('company_profile.edit', compact('companyProfile'));
     }
 
-    public function update(Request $request)
+    // You can also add a store or update method if you need to handle saving the changes
+    public function update(Request $request, $id)
     {
-        $user = Auth::user();
-
-        $request->validate([
-            'logo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'banner' => 'nullable|image|mimes:jpg,jpeg,png|max:4096',
-            'tagline' => 'nullable|string|max:255',
+        // Validate the request data
+        $validatedData = $request->validate([
+            'company_name' => 'required|string|max:255',
+            'company_description' => 'nullable|string',
         ]);
 
-        $companyProfile = $user->companyProfile ?: new CompanyProfile();
+        // Find the company profile and update it
+        $companyProfile = CompanyProfile::findOrFail($id);
+        $companyProfile->update($validatedData);
 
-        if ($request->hasFile('logo')) {
-            if ($companyProfile->logo_path) {
-                Storage::delete($companyProfile->logo_path);
-            }
-            $companyProfile->logo_path = $request->file('logo')->store('logos', 'public');
-        }
-
-        if ($request->hasFile('banner')) {
-            if ($companyProfile->banner_path) {
-                Storage::delete($companyProfile->banner_path);
-            }
-            $companyProfile->banner_path = $request->file('banner')->store('banners', 'public');
-        }
-
-        $companyProfile->tagline = $request->input('tagline');
-        $companyProfile->save();
-
-        if (!$user->company_profile_id) {
-            $user->company_profile_id = $companyProfile->id;
-            $user->save();
-        }
-
-        return redirect()->route('company-profiles.edit')->with('status', 'Company profile updated.');
+        // Redirect or show success message
+        return redirect()->route('dashboard')->with('success', 'Company profile updated successfully');
     }
 }
-
