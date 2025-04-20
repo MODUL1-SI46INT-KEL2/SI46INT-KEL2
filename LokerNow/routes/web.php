@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\JobTrackingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -25,6 +26,13 @@ Route::middleware(['auth', 'role:employer'])->group(function () {
 
     // Route to update company profile
     Route::put('/company-profile', [CompanyProfileController::class, 'update'])->name('company-profiles.update');
+});
+
+
+
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/trackings', [JobTrackingController::class, 'index'])->name('tracking.index');
 });
 
 
