@@ -1,0 +1,214 @@
+{{-- resources/views/layouts/app.blade.php --}}
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ config('app.name') }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+
+    @vite('resources/css/app.css')
+    <link href="{{ asset('css/notifications.css') }}" rel="stylesheet">
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Apply styles to notification dropdown
+            setInterval(function() {
+                const dropdowns = document.querySelectorAll('.notification-dropdown');
+                dropdowns.forEach(dropdown => {
+                    dropdown.style.width = '450px';
+                    dropdown.style.maxWidth = '90vw';
+                });
+            }, 500); // Check every 500ms
+        });
+    </script>
+</head>
+
+<body class="font-sans antialiased bg-gray-900 text-white">
+
+    {{-- Navbar --}}
+    <nav class="flex items-center justify-between px-6 py-4 border-b border-gray-700 bg-gray-800">
+        <div class="flex items-center gap-2">
+            <img src="{{ asset('icon.svg') }}" alt="{{ config('app.name') }}" class="w-6 h-6" />
+            <span class="text-xl font-semibold text-white">{{ config('app.name') }}</span>
+        </div>
+
+        <ul class="hidden md:flex items-center gap-6 text-sm font-small">
+            <li>
+                @auth
+                    @if(auth()->user()->role === 'admin')
+                        <a href="/employer/dashboard"
+                            class="text-gray-200 hover:text-white {{ request()->is('employer/dashboard') ? 'font-bold text-white' : '' }}">Home</a>
+                    @else
+                        <a href="/dashboard"
+                            class="text-gray-200 hover:text-white {{ request()->is('saved-jobs') ? 'font-bold text-white' : '' }}">Home</a>
+                    @endif
+                @else
+                    <a href="/"
+                        class="text-gray-200 hover:text-white {{ request()->is('/') ? 'font-bold text-white' : '' }}">Home</a>
+                @endauth
+            </li>
+            <li>
+                <a href="/search-jobs"
+                    class="text-gray-200 hover:text-white {{ request()->is('search-jobs') ? 'font-bold text-white' : '' }}">Find
+                    Jobs</a>
+            </li>
+            @auth
+                @if(auth()->user()->role === 'jobseeker')
+                <li>
+                    <a href="{{ route('jobseeker.applications.index') }}"
+                        class="text-gray-200 hover:text-white {{ request()->is('jobseeker/applications*') ? 'font-bold text-white' : '' }}">My Applications</a>
+                </li>
+                @endif
+            @endauth
+            <li>
+                <a href="#"
+                    class="text-gray-200 hover:text-white {{ request()->is('companies') ? 'font-bold text-white' : '' }}">Companies</a>
+            </li>
+            <li>
+                <a href="{{ route('messages.index') }}"
+                    class="text-gray-200 hover:text-white {{ request()->is('messages*') ? 'font-bold text-white' : '' }}">Messages</a>
+            </li>
+        </ul>
+
+        <div class="flex items-center space-x-4">
+            <!-- Notification Bell -->
+            <div class="relative" x-data="{ open: false, notifications: [], unreadCount: 0 }" @click.away="open = false" x-init="
+                fetch('{{ route(\"notifications.index\") }}') 
+                    .then(response => response.json())
+                    .then(data => { 
+                        notifications = data.notifications; 
+                        unreadCount = data.unreadCount;
+                    });
+                
+                // Set up a refresh interval (every 30 seconds)
+                setInterval(() => {
+                    fetch('{{ route(\"notifications.index\") }}') 
+                        .then(response => response.json())
+                        .then(data => { 
+                            notifications = data.notifications; 
+                            unreadCount = data.unreadCount;
+                        });
+                }, 30000);
+            ">
+                <button @click="open = !open" class="text-white hover:text-[#B9FF66] relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                    </svg>
+                    <span x-show="unreadCount > 0" x-text="unreadCount" class="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-500 rounded-full"></span>
+                </button>
+                
+                <!-- Notification Dropdown -->
+                <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="notification-dropdown absolute right-0 mt-2 bg-gray-800 border border-gray-700 rounded-md shadow-lg z-50">
+                    <div class="p-3 border-b border-gray-700 flex justify-between items-center">
+                        <h3 class="text-lg font-medium text-white">Notifications</h3>
+                        <button x-show="unreadCount > 0" @click.prevent="
+                            fetch('{{ route(\"notifications.readAll\") }}', { 
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(data => { 
+                                if (data.success) {
+                                    notifications.forEach(notification => notification.read = true);
+                                    unreadCount = 0;
+                                }
+                            });
+                        " class="text-xs text-[#B9FF66] hover:underline">Mark all as read</button>
+                    </div>
+                    
+                    <div class="max-h-80 overflow-y-auto">
+                        <template x-if="notifications.length === 0">
+                            <div class="p-4 text-center text-gray-400">
+                                No notifications
+                            </div>
+                        </template>
+                        
+                        <template x-for="notification in notifications" :key="notification.id">
+                            <div :class="{'bg-gray-700': !notification.read, 'hover:bg-gray-700': notification.read}" class="p-4 border-b border-gray-700">
+                                <div class="flex items-start">
+                                    <div class="flex-1">
+                                        <h4 x-text="notification.title" class="font-medium text-white"></h4>
+                                        <p x-text="notification.message" class="text-sm text-gray-300 mt-1"></p>
+                                        <p class="text-xs text-gray-400 mt-1" x-text="new Date(notification.created_at).toLocaleString()"></p>
+                                    </div>
+                                    <button x-show="!notification.read" @click.prevent="
+                                        fetch(`/notifications/${notification.id}/read`, { 
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                            }
+                                        })
+                                        .then(response => response.json())
+                                        .then(data => { 
+                                            if (data.success) {
+                                                notification.read = true;
+                                                unreadCount--;
+                                            }
+                                        });
+                                    " class="text-xs text-[#B9FF66] hover:underline">
+                                        Mark as read
+                                    </button>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Profile Icon -->
+            @auth
+                @if(auth()->user()->role === 'jobseeker')
+                    <a href="{{ route('jobseeker.profile.edit') }}" class="text-white hover:text-[#B9FF66]">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 {{ request()->is('jobseeker/profile*') ? 'ring-2 ring-[#B9FF66] rounded-full' : '' }}">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                        </svg>
+                    </a>
+                @elseif(auth()->user()->role === 'admin')
+                    <a href="{{ route('employer.profile.edit') }}" class="text-white hover:text-[#B9FF66]">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6 {{ request()->is('employer/profile*') ? 'ring-2 ring-[#B9FF66] rounded-full' : '' }}">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                        </svg>
+                    </a>
+                @else
+                    <a href="#" class="text-white hover:text-[#B9FF66]">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                        </svg>
+                    </a>
+                @endif
+            @else
+                <a href="#" class="text-white hover:text-[#B9FF66]">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                </a>
+            @endauth
+
+            <!-- Logout Button -->
+            @auth
+                <form method="POST" action="{{ route('logout') }}" class="inline">
+                    @csrf
+                    <button type="submit" class="text-gray-200 hover:text-white text-sm font-medium">
+                        Logout
+                    </button>
+                </form>
+            @endauth
+        </div>
+    </nav>
+
+    {{-- Main content --}}
+    <main>
+        @yield('content')
+    </main>
+
+</body>
+
+</html>
