@@ -38,7 +38,7 @@ class DashboardController extends Controller
         
         $profileViews = 0; // This would typically come from an analytics service
         
-        // Get shortlisted candidates
+        // Get shortlisted candidates, this is not used in the dashboard
         $shortlistedCandidates = JobApplication::whereHas('job', function($query) use ($userId) {
                                     $query->where('id_admin', $userId);
                                 })
