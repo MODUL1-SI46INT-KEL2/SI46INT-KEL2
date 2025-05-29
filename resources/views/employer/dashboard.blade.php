@@ -118,7 +118,7 @@
             </div>
         </a>
 
-        <!-- Recent Shortlisted Candidates -->
+        <!-- Recently Shortlisted -->
         <div class="bg-[#B9FF66] rounded-2xl p-4 relative h-[160px] border border-gray-900">
             <div class="bg-white inline-block px-2 py-1 rounded-md text-sm font-medium text-gray-900">
                 Recently Shortlisted
@@ -127,16 +127,25 @@
             @if(isset($shortlistedCandidates) && count($shortlistedCandidates) > 0)
                 <div class="mt-4 flex justify-center" style="gap: 58px;">
                     @foreach($shortlistedCandidates->take(3) as $candidate)
-                        <div class="flex flex-col items-center">
-                            <div class="bg-gray-800 rounded-full p-2 w-12 h-12 flex items-center justify-center mb-2">
+                        <a href="{{ route('employer.candidates.show', $candidate->user->id) }}" 
+                           class="flex flex-col items-center group hover:scale-105 transition-transform candidate-item"
+                           data-candidate-id="{{ $candidate->user->id }}">
+                            <div class="bg-gray-800 rounded-full p-2 w-12 h-12 flex items-center justify-center mb-2 group-hover:ring-2 group-hover:ring-gray-900 relative">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                                 </svg>
+                                <button onclick="toggleHideCandidate({{ $candidate->user->id }})" 
+                                        class="absolute -top-1 -right-1 bg-gray-900 rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                                        title="Hide candidate">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-white" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
                             </div>
-                            <div class="bg-white px-3 py-1 rounded-full">
-                                <span class="text-gray-900 text-sm font-medium">{{ $candidate->user->name }}</span>
+                            <div class="bg-white px-3 py-1 rounded-full group-hover:bg-gray-900 group-hover:text-white transition-colors">
+                                <span class="text-sm font-medium text-gray-900 group-hover:text-white">{{ $candidate->user->name }}</span>
                             </div>
-                        </div>
+                        </a>
                     @endforeach
                 </div>
             @else
