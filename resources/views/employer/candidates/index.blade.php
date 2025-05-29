@@ -15,6 +15,34 @@
                             @if($candidate->jobseekerProfile && $candidate->jobseekerProfile->job_title)
                                 <p class="text-gray-300 text-sm mt-1">{{ $candidate->jobseekerProfile->job_title }}</p>
                             @endif
+                            @if($candidate->jobseekerProfile && $candidate->jobseekerProfile->location)
+                                <p class="text-gray-300 text-sm">{{ $candidate->jobseekerProfile->location }}</p>
+                            @endif
+                            
+                            @if($candidate->jobseekerProfile && $candidate->jobseekerProfile->skills)
+                                <div class="mt-2">
+                                    <h4 class="text-sm font-medium text-gray-300">Skills:</h4>
+                                    <div class="flex flex-wrap gap-2 mt-1">
+                                        @foreach(explode(',', $candidate->jobseekerProfile->skills) as $skill)
+                                            <span class="bg-gray-600 text-gray-200 px-2 py-1 rounded text-xs">{{ trim($skill) }}</span>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+                            
+                            @if($candidate->jobseekerProfile && $candidate->jobseekerProfile->experience)
+                                <div class="mt-2">
+                                    <h4 class="text-sm font-medium text-gray-300">Experience:</h4>
+                                    <p class="text-gray-300 text-sm">{{ Str::limit($candidate->jobseekerProfile->experience, 100) }}</p>
+                                </div>
+                            @endif
+                            
+                            @if($candidate->jobseekerProfile && $candidate->jobseekerProfile->education)
+                                <div class="mt-2">
+                                    <h4 class="text-sm font-medium text-gray-300">Education:</h4>
+                                    <p class="text-gray-300 text-sm">{{ Str::limit($candidate->jobseekerProfile->education, 100) }}</p>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
