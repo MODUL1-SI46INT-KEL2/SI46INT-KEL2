@@ -5,6 +5,11 @@
     <div class="bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
         <h1 class="text-2xl font-bold text-white mb-6">Candidate Listing</h1>
         
+        <!-- Results Count -->
+        <div class="text-gray-300 mb-4">
+            Found {{ $candidates->total() }} candidates
+        </div>
+        
         <!-- Candidates List -->
         <div class="space-y-4">
             @forelse ($candidates as $candidate)
@@ -43,6 +48,13 @@
                                     <p class="text-gray-300 text-sm">{{ Str::limit($candidate->jobseekerProfile->education, 100) }}</p>
                                 </div>
                             @endif
+                        </div>
+                        
+                        <div class="mt-4 md:mt-0">
+                            <a href="{{ route('employer.candidates.show', $candidate->id) }}" 
+                               class="inline-block bg-[#B9FF66] hover:bg-[#a8eb55] text-gray-900 font-medium py-2 px-4 rounded-md">
+                                View Profile
+                            </a>
                         </div>
                     </div>
                 </div>
