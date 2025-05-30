@@ -10,13 +10,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
 
-    @vite('resources/css/app.css')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link href="{{ asset('css/notifications.css') }}" rel="stylesheet">
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // The styles are now handled by the CSS file
         });
     </script>
+
+    <!-- Additional Scripts -->
+    <script src="{{ asset('js/candidate-hiding.js') }}"></script>
 </head>
 
 <body class="font-sans antialiased bg-gray-900 text-white">

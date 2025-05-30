@@ -37,7 +37,7 @@ class DashboardController extends Controller
                             ->count();
         
         $profileViews = 0; // This would typically come from an analytics service
-        
+
         // Get recent applications
         $recentApplications = JobApplication::whereHas('job', function($query) use ($userId) {
                                 $query->where('id_admin', $userId);
@@ -46,6 +46,16 @@ class DashboardController extends Controller
                             ->latest()
                             ->take(5)
                             ->get();
+
+        // Get shortlisted candidates
+        $shortlistedCandidates = JobApplication::whereHas('job', function($query) use ($userId) {
+                                    $query->where('id_admin', $userId);
+                                })
+                                ->where('status', 'shortlisted')
+                                ->with(['user', 'job'])
+                                ->latest('status_updated_at')
+                                ->take(3)
+                                ->get();
         
         // Get company review statistics
         $averageRating = CompanyReview::where("admin_id", $userId)
@@ -69,6 +79,7 @@ class DashboardController extends Controller
             'newApplications', 
             'profileViews',
             'recentApplications',
+            'shortlistedCandidates',
             'averageRating',
             'totalReviews',
             'recentReviews'
