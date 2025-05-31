@@ -20,6 +20,8 @@
 
     <!-- Additional Scripts -->
     <script src="{{ asset('js/candidate-hiding.js') }}"></script>
+    <!-- TODO: Review implementation - candidate management features -->
+    <script src="{{ asset('js/candidate-favorites.js') }}"></script>
 </head>
 
 <body class="font-sans antialiased bg-gray-900 text-white">
@@ -106,7 +108,7 @@
                 </button>
                 
                 <!-- Notification Dropdown -->
-                <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-100" x-transition:leave-end="transform opacity-0 scale-95" class="notification-dropdown bg-gray-800 border border-gray-700 rounded-md">
+                <div x-show="open" x-transition:enter="transition ease-out duration-100" x-transition:enter-start="transform opacity-0 scale-95" x-transition:enter-end="transform opacity-100 scale-100" x-transition:leave="transition ease-in duration-75" x-transition:leave-start="transform opacity-100 scale-95" x-transition:leave-end="transform opacity-0 scale-95" class="notification-dropdown bg-gray-800 border border-gray-700 rounded-md">
                     <div class="p-3 border-b border-gray-700 flex justify-between items-center">
                         <h3 class="text-lg font-medium text-white">Notifications</h3>
                         <button x-show="unreadCount > 0" @click.prevent="
