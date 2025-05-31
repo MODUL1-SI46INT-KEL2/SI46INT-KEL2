@@ -20,16 +20,6 @@
 
     <!-- Additional Scripts -->
     <script src="{{ asset('js/candidate-hiding.js') }}"></script>
-    <!-- TODO: Review implementation - candidate management features -->
-    <script src="{{ asset('js/candidate-favorites.js') }}"></script>
-    <script>
-        // Initialize the abandoned favorites system
-        document.addEventListener('DOMContentLoaded', function() {
-            // The favorites functionality is intentionally left non-functional
-            // as it was replaced by the shortlist feature, do not use this script
-            console.log('Favorites system initialization skipped - using shortlist instead');
-        });
-    </script>
 </head>
 
 <body class="font-sans antialiased bg-gray-900 text-white">
