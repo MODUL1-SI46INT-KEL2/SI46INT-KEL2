@@ -64,7 +64,7 @@
                 <p class="text-gray-300 text-sm mt-2">Based on {{ $reviews->total() }} reviews</p>
             </div>
             
-            <!-- Rating Distribution -->
+            <!-- Rating Distribution# -->
             <div class="bg-gray-700 rounded-lg shadow-md p-5 border border-gray-600 md:col-span-2">
                 <h2 class="text-lg font-medium text-white mb-3">Rating Distribution</h2>
                 <div class="space-y-2">

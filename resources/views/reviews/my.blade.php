@@ -22,7 +22,7 @@
                 {{ session('info') }}
             </div>
         @endif
-        
+        <!--#-->
         @if($reviews->isEmpty())
             <div class="bg-gray-700 rounded-lg p-8 text-center">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-gray-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

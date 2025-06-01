@@ -67,7 +67,7 @@
                 @enderror
             </div>
             
-            <!-- Review Content -->
+            <!-- Review Content# -->
             <div>
                 <label for="content" class="block text-sm font-medium text-gray-300 mb-1">Review <span class="text-red-500">*</span></label>
                 <textarea name="content" id="content" rows="6" required class="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md text-white focus:ring-2 focus:ring-[#B9FF66] focus:border-transparent" placeholder="Share your experience working for this employer...">{{ old('content', $review->content) }}</textarea>
