@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 class JobController extends Controller
 {
     /**
-     * Display a listing of jobs. | Job listing
+     * Display a listing of jobs.
      */
     public function index()
     {
